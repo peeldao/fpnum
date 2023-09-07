@@ -24,6 +24,8 @@ describe("SuperInt", () => {
 
       reservedRate.setPercentage(".5");
       expect(reservedRate.format()).toEqual("0.5");
+      expect(reservedRate.toPercentage()).toEqual(50);
+      expect(reservedRate.value).toEqual(5_000n);
     });
 
     it("discount rate", () => {
