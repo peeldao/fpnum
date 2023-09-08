@@ -13,6 +13,28 @@ describe("SuperInt", () => {
       });
       expect(superInt.format()).toEqual(expected);
     });
+
+    describe("value", () => {
+      it("throws if greater than max", () => {
+        const superInt = new SuperInt(1n, {
+          max: 1n,
+        });
+
+        expect(() => {
+          superInt.value = 2n;
+        }).toThrow("value 2 is greater than max 1");
+      });
+      it("does not throw if less than max", () => {
+        const superInt = new SuperInt(1n, {
+          max: 2n,
+        });
+
+        expect(() => {
+          superInt.value = 1n;
+        }).not.toThrow();
+        expect(superInt.value).toEqual(1n);
+      });
+    });
   });
 
   describe("jb", () => {
@@ -22,7 +44,7 @@ describe("SuperInt", () => {
       expect(reservedRate.format()).toEqual("0.2345");
       expect(reservedRate.formatFloat()).toEqual(0.2345);
 
-      reservedRate.setPercentage(".5");
+      reservedRate.setPercentage(0.5);
       expect(reservedRate.format()).toEqual("0.5");
       expect(reservedRate.toPercentage()).toEqual(50);
       expect(reservedRate.value).toEqual(5_000n);
@@ -34,7 +56,7 @@ describe("SuperInt", () => {
       expect(discountRate.format()).toEqual("0.2");
       expect(discountRate.formatFloat()).toEqual(0.2);
 
-      discountRate.setPercentage(".5123");
+      discountRate.setPercentage(0.5123);
       expect(discountRate.format()).toEqual("0.5123");
       expect(discountRate.toPercentage()).toEqual(51.23);
       expect(discountRate.value).toEqual(512_300_000n);

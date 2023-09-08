@@ -57,18 +57,36 @@ export function parseUnits(value: string, decimals: number) {
 }
 
 class SuperInt<T extends number> {
-  value: bigint;
-  decimals: T;
-  max: bigint | undefined;
+  private _value: bigint;
+  private _decimals: T;
+  private _max: bigint | undefined;
 
   constructor(value: bigint, opts?: { decimals?: T; max?: bigint }) {
-    this.max = opts?.max;
+    // set max first, if it exists.
+    this._max = opts?.max;
+
+    this.value = value;
+    this._value = value;
+
+    this._decimals = opts?.decimals ?? (0 as T);
+  }
+
+  set value(value: bigint) {
     if (typeof this.max !== "undefined" && value > this.max) {
       throw new Error(`value ${value} is greater than max ${this.max}`);
     }
 
-    this.value = value;
-    this.decimals = opts?.decimals ?? (0 as T);
+    this._value = value;
+  }
+
+  get value() {
+    return this._value;
+  }
+  get decimals() {
+    return this._decimals;
+  }
+  get max() {
+    return this._max;
   }
 
   format(): string {
@@ -83,15 +101,11 @@ class SuperInt<T extends number> {
     return this.formatFloat() * 100;
   }
 
-  setPercentage(percentage: string): void {
+  setPercentage(percentage: number): void {
     if (typeof this.max === "undefined")
       throw new Error("SuperInt.max is required");
 
-    this.value = parseUnits(percentage, this.decimals);
-  }
-
-  setDecimals(decimals: T): void {
-    this.decimals = decimals;
+    this.value = parseUnits(percentage.toString(), this.decimals);
   }
 }
 
