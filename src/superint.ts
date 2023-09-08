@@ -68,7 +68,7 @@ class SuperInt<T extends number> {
     }
 
     this.value = value;
-    this.decimals = opts?.decimals ?? 0 as T;
+    this.decimals = opts?.decimals ?? (0 as T);
   }
 
   format(): string {
@@ -116,6 +116,12 @@ export class RedemptionRate extends SuperInt<4> {
 export class DiscountRate extends SuperInt<9> {
   constructor(value: bigint) {
     super(value, { decimals: 9, max: MAX_DISCOUNT_RATE });
+  }
+}
+
+export class Ether extends SuperInt<18> {
+  constructor(value: bigint) {
+    super(value, { decimals: 18 });
   }
 }
 
