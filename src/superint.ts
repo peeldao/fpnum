@@ -57,20 +57,23 @@ export function parseUnits(value: string, decimals: number) {
 }
 
 class SuperInt<T extends number> {
-  private _value: bigint;
+  private _value: bigint = 0n;
   private _decimals: T;
   private _max: bigint | undefined;
 
   constructor(value: bigint, opts?: { decimals?: T; max?: bigint }) {
     // set max first, if it exists.
     this._max = opts?.max;
-
     this.value = value;
-    this._value = value;
-
+    if (opts?.decimals && opts.decimals < 0) {
+      throw new Error("decimals must be greater than or equal to 0");
+    }
     this._decimals = opts?.decimals ?? (0 as T);
   }
 
+  get value() {
+    return this._value;
+  }
   set value(value: bigint) {
     if (typeof this.max !== "undefined" && value > this.max) {
       throw new Error(`value ${value} is greater than max ${this.max}`);
@@ -79,9 +82,6 @@ class SuperInt<T extends number> {
     this._value = value;
   }
 
-  get value() {
-    return this._value;
-  }
   get decimals() {
     return this._decimals;
   }
