@@ -18,7 +18,7 @@ describe("SuperInt", () => {
   describe("jb", () => {
     it("reserved rate", () => {
       const reservedRateRaw = 2_345n; // 23.45%
-      const reservedRate = new ReservedRate(reservedRateRaw);
+      const reservedRate: ReservedRate = new ReservedRate(reservedRateRaw);
       expect(reservedRate.format()).toEqual("0.2345");
       expect(reservedRate.formatFloat()).toEqual(0.2345);
 

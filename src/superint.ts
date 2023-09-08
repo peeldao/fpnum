@@ -56,19 +56,19 @@ export function parseUnits(value: string, decimals: number) {
   return BigInt(`${negative ? "-" : ""}${integer}${fraction}`);
 }
 
-class SuperInt {
+class SuperInt<T extends number> {
   value: bigint;
-  decimals: number;
+  decimals: T;
   max: bigint | undefined;
 
-  constructor(value: bigint, opts?: { decimals?: number; max?: bigint }) {
+  constructor(value: bigint, opts?: { decimals?: T; max?: bigint }) {
     this.max = opts?.max;
     if (typeof this.max !== "undefined" && value > this.max) {
       throw new Error(`value ${value} is greater than max ${this.max}`);
     }
 
     this.value = value;
-    this.decimals = opts?.decimals ?? 0;
+    this.decimals = opts?.decimals ?? 0 as T;
   }
 
   format(): string {
@@ -90,7 +90,7 @@ class SuperInt {
     this.value = parseUnits(percentage, this.decimals);
   }
 
-  setDecimals(decimals: number): void {
+  setDecimals(decimals: T): void {
     this.decimals = decimals;
   }
 }
@@ -101,19 +101,19 @@ export const MAX_DISCOUNT_RATE = 1_000_000_000n;
 export const MAX_REDEMPTION_RATE = 10_000n;
 export const MAX_RESERVED_RATE = 10_000n;
 
-export class ReservedRate extends SuperInt {
+export class ReservedRate extends SuperInt<4> {
   constructor(value: bigint) {
     super(value, { decimals: 4, max: MAX_RESERVED_RATE });
   }
 }
 
-export class RedemptionRate extends SuperInt {
+export class RedemptionRate extends SuperInt<4> {
   constructor(value: bigint) {
     super(value, { decimals: 4, max: MAX_REDEMPTION_RATE });
   }
 }
 
-export class DiscountRate extends SuperInt {
+export class DiscountRate extends SuperInt<9> {
   constructor(value: bigint) {
     super(value, { decimals: 9, max: MAX_DISCOUNT_RATE });
   }
