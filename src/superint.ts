@@ -93,12 +93,12 @@ class SuperInt<T extends number> {
     return formatUnits(this.value, this.decimals);
   }
 
-  formatFloat(): number {
+  toFloat(): number {
     return parseFloat(this.format());
   }
 
   toPercentage(): number {
-    return this.formatFloat() * 100;
+    return this.toFloat() * 100;
   }
 
   setPercentage(percentage: number): void {
