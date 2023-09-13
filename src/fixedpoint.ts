@@ -60,12 +60,12 @@ export class FixedInt<T extends number> {
   _value: bigint;
   decimals: T;
 
-  constructor(val: bigint, decimals: T, opts?: { parseVal?: boolean }) {
+  constructor(val: bigint, decimals: T) {
     if (decimals < 0) {
       throw new Error("decimals must be greater than or equal to 0");
     }
 
-    this._value = opts?.parseVal ? parseUnits(val.toString(), decimals) : val;
+    this._value = val;
     this.decimals = decimals;
   }
 
@@ -75,6 +75,10 @@ export class FixedInt<T extends number> {
   }
   set val(value: bigint) {
     this._value = value;
+  }
+
+  static parse(value: string, decimals: number) {
+    return new FixedInt(parseUnits(value, decimals), decimals);
   }
 
   format(): string {
