@@ -1,8 +1,8 @@
 {
-  "name": "superint",
-  "version": "0.0.5",
+  "name": "fixedpoint",
+  "version": "0.0.1",
   "description": "",
-  "main": "lib/superint.js",
+  "main": "lib/fixedpoint.js",
   "scripts": {
     "test": "jest",
     "build": "tsc"

@@ -1,6 +1,11 @@
-import SuperInt, { DiscountRate, ReservedRate } from "./superint";
+import {
+  FixedInt,
+  DiscountRate,
+  ReservedRate,
+  FixedPortion,
+} from "./fixedpoint";
 
-describe("SuperInt", () => {
+describe("FixedPoint.js", () => {
   describe("format", () => {
     it.each`
       value                         | decimals | expected
@@ -8,31 +13,27 @@ describe("SuperInt", () => {
       ${1}                          | ${1}     | ${"0.1"}
       ${1_000_000_000_000_000_000n} | ${18}    | ${"1"}
     `("formats", ({ value, decimals, expected }) => {
-      const superInt = new SuperInt(value, {
-        decimals,
-      });
-      expect(superInt.format()).toEqual(expected);
+      const fixedInt = new FixedInt(value, decimals);
+      expect(fixedInt.format()).toEqual(expected);
     });
+  });
 
+  describe("FixedPortion", () => {
     describe("value", () => {
       it("throws if greater than max", () => {
-        const superInt = new SuperInt(1n, {
-          max: 1n,
-        });
+        const fixedInt = new FixedPortion(1n, 18, 1n);
 
         expect(() => {
-          superInt.value = 2n;
+          fixedInt.val = 2n;
         }).toThrow("value 2 is greater than max 1");
       });
-      it("does not throw if less than max", () => {
-        const superInt = new SuperInt(1n, {
-          max: 2n,
-        });
 
+      it("does not throw if less than max", () => {
+        const fixedInt = new FixedPortion(1n, 18, 2n);
         expect(() => {
-          superInt.value = 1n;
+          fixedInt.val = 1n;
         }).not.toThrow();
-        expect(superInt.value).toEqual(1n);
+        expect(fixedInt.val).toEqual(1n);
       });
     });
   });
@@ -47,7 +48,7 @@ describe("SuperInt", () => {
       reservedRate.setPercentage(0.5);
       expect(reservedRate.format()).toEqual("0.5");
       expect(reservedRate.toPercentage()).toEqual(50);
-      expect(reservedRate.value).toEqual(5_000n);
+      expect(reservedRate.val).toEqual(5_000n);
     });
 
     it("discount rate", () => {
@@ -59,7 +60,7 @@ describe("SuperInt", () => {
       discountRate.setPercentage(0.5123);
       expect(discountRate.format()).toEqual("0.5123");
       expect(discountRate.toPercentage()).toEqual(51.23);
-      expect(discountRate.value).toEqual(512_300_000n);
+      expect(discountRate.val).toEqual(512_300_000n);
     });
   });
 });

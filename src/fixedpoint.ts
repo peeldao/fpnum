@@ -56,45 +56,59 @@ export function parseUnits(value: string, decimals: number) {
   return BigInt(`${negative ? "-" : ""}${integer}${fraction}`);
 }
 
-class SuperInt<T extends number> {
-  private _value: bigint = 0n;
-  private _decimals: T;
-  private _max: bigint | undefined;
+export class FixedInt<T extends number> {
+  _value: bigint;
+  decimals: T;
 
-  constructor(value: bigint, opts?: { decimals?: T; max?: bigint }) {
-    // set max first, if it exists.
-    this._max = opts?.max;
-    this.value = value;
-    if (opts?.decimals && opts.decimals < 0) {
+  constructor(val: bigint, decimals: T, opts?: { parseVal?: boolean }) {
+    if (decimals < 0) {
       throw new Error("decimals must be greater than or equal to 0");
     }
-    this._decimals = opts?.decimals ?? (0 as T);
+
+    this._value = opts?.parseVal ? parseUnits(val.toString(), decimals) : val;
+    this.decimals = decimals;
   }
 
-  get value() {
+  get val() {
+    console.log("here");
     return this._value;
   }
-  set value(value: bigint) {
+  set val(value: bigint) {
+    this._value = value;
+  }
+
+  format(): string {
+    return formatUnits(this.val, this.decimals);
+  }
+
+  toFloat(): number {
+    return parseFloat(this.format());
+  }
+}
+
+export class FixedPortion<T extends number> extends FixedInt<T> {
+  max: bigint;
+
+  constructor(
+    val: bigint,
+    decimals: T,
+    max: bigint,
+    opts?: { parseVal?: boolean }
+  ) {
+    super(val, decimals, opts);
+    // set max first, if it exists.
+    this.max = max;
+  }
+
+  set val(value: bigint) {
     if (typeof this.max !== "undefined" && value > this.max) {
       throw new Error(`value ${value} is greater than max ${this.max}`);
     }
 
     this._value = value;
   }
-
-  get decimals() {
-    return this._decimals;
-  }
-  get max() {
-    return this._max;
-  }
-
-  format(): string {
-    return formatUnits(this.value, this.decimals);
-  }
-
-  toFloat(): number {
-    return parseFloat(this.format());
+  get val() {
+    return this._value;
   }
 
   toPercentage(): number {
@@ -103,9 +117,9 @@ class SuperInt<T extends number> {
 
   setPercentage(percentage: number): void {
     if (typeof this.max === "undefined")
-      throw new Error("SuperInt.max is required");
+      throw new Error("FixedInt.max is required");
 
-    this.value = parseUnits(percentage.toString(), this.decimals);
+    this.val = parseUnits(percentage.toString(), this.decimals);
   }
 }
 
@@ -115,28 +129,26 @@ export const MAX_DISCOUNT_RATE = 1_000_000_000n;
 export const MAX_REDEMPTION_RATE = 10_000n;
 export const MAX_RESERVED_RATE = 10_000n;
 
-export class ReservedRate extends SuperInt<4> {
+export class ReservedRate extends FixedPortion<4> {
   constructor(value: bigint) {
-    super(value, { decimals: 4, max: MAX_RESERVED_RATE });
+    super(value, 4, MAX_RESERVED_RATE);
   }
 }
 
-export class RedemptionRate extends SuperInt<4> {
+export class RedemptionRate extends FixedPortion<4> {
   constructor(value: bigint) {
-    super(value, { decimals: 4, max: MAX_REDEMPTION_RATE });
+    super(value, 4, MAX_REDEMPTION_RATE);
   }
 }
 
-export class DiscountRate extends SuperInt<9> {
+export class DiscountRate extends FixedPortion<9> {
   constructor(value: bigint) {
-    super(value, { decimals: 9, max: MAX_DISCOUNT_RATE });
+    super(value, 9, MAX_DISCOUNT_RATE);
   }
 }
 
-export class Ether extends SuperInt<18> {
+export class Ether extends FixedInt<18> {
   constructor(value: bigint) {
-    super(value, { decimals: 18 });
+    super(value, 18);
   }
 }
-
-export default SuperInt;
