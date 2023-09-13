@@ -1,4 +1,4 @@
 # FixedPoint.js
 
-A tiny lib for working with fixed-point numbers. For dApps on Ethereum, financial applications, whatever.
+A tiny lib for working with fixed-point numbers in JS. For dApps on Ethereum, financial applications, whatever.
   
