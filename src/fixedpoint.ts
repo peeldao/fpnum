@@ -53,13 +53,13 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
     return this._value;
   }
 
-  toPercentage(): number {
+  formatPercentage(): number {
     return this.toFloat() * 100;
   }
 
   setPercentage(percentage: number): void {
     if (typeof this.max === "undefined")
-      throw new Error("FixedInt.max is required");
+      throw new Error("FixedPortion.max is required");
 
     this.val = parseUnits(percentage.toString(), this.decimals);
   }

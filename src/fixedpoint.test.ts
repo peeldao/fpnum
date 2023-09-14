@@ -1,9 +1,5 @@
-import {
-  FixedInt,
-  DiscountRate,
-  ReservedRate,
-  FixedPortion,
-} from "./fixedpoint";
+import { FixedInt, FixedPortion } from "./fixedpoint";
+import { DiscountRate, ReservedRate } from "./jb";
 
 describe("FixedPoint.js", () => {
   describe("format", () => {
@@ -47,7 +43,7 @@ describe("FixedPoint.js", () => {
 
       reservedRate.setPercentage(0.5);
       expect(reservedRate.format()).toEqual("0.5");
-      expect(reservedRate.toPercentage()).toEqual(50);
+      expect(reservedRate.formatPercentage()).toEqual(50);
       expect(reservedRate.val).toEqual(5_000n);
     });
 
@@ -59,7 +55,7 @@ describe("FixedPoint.js", () => {
 
       discountRate.setPercentage(0.5123);
       expect(discountRate.format()).toEqual("0.5123");
-      expect(discountRate.toPercentage()).toEqual(51.23);
+      expect(discountRate.formatPercentage()).toEqual(51.23);
       expect(discountRate.val).toEqual(512_300_000n);
     });
   });
