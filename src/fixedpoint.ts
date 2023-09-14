@@ -93,13 +93,8 @@ export class FixedInt<T extends number> {
 export class FixedPortion<T extends number> extends FixedInt<T> {
   max: bigint;
 
-  constructor(
-    val: bigint,
-    decimals: T,
-    max: bigint,
-    opts?: { parseVal?: boolean }
-  ) {
-    super(val, decimals, opts);
+  constructor(val: bigint, decimals: T, max: bigint) {
+    super(val, decimals);
     // set max first, if it exists.
     this.max = max;
   }
