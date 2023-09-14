@@ -12,7 +12,6 @@ export class FixedInt<T extends number> {
   }
 
   get val() {
-    console.log("here");
     return this._value;
   }
   set val(value: bigint) {
