@@ -1,61 +1,3 @@
-// lifted from viem
-export function formatUnits(value: bigint, decimals: number) {
-  let display = value.toString();
-
-  const negative = display.startsWith("-");
-  if (negative) display = display.slice(1);
-
-  display = display.padStart(decimals, "0");
-
-  let [integer, fraction] = [
-    display.slice(0, display.length - decimals),
-    display.slice(display.length - decimals),
-  ];
-  fraction = fraction.replace(/(0+)$/, "");
-  return `${negative ? "-" : ""}${integer || "0"}${
-    fraction ? `.${fraction}` : ""
-  }`;
-}
-
-export function parseUnits(value: string, decimals: number) {
-  let [integer, fraction = "0"] = value.split(".");
-
-  const negative = integer.startsWith("-");
-  if (negative) integer = integer.slice(1);
-
-  // trim leading zeros.
-  fraction = fraction.replace(/(0+)$/, "");
-
-  // round off if the fraction is larger than the number of decimals.
-  if (decimals === 0) {
-    if (Math.round(Number(`.${fraction}`)) === 1)
-      integer = `${BigInt(integer) + 1n}`;
-    fraction = "";
-  } else if (fraction.length > decimals) {
-    const [left, unit, right] = [
-      fraction.slice(0, decimals - 1),
-      fraction.slice(decimals - 1, decimals),
-      fraction.slice(decimals),
-    ];
-
-    const rounded = Math.round(Number(`${unit}.${right}`));
-    if (rounded > 9)
-      fraction = `${BigInt(left) + BigInt(1)}0`.padStart(left.length + 1, "0");
-    else fraction = `${left}${rounded}`;
-
-    if (fraction.length > decimals) {
-      fraction = fraction.slice(1);
-      integer = `${BigInt(integer) + 1n}`;
-    }
-
-    fraction = fraction.slice(0, decimals);
-  } else {
-    fraction = fraction.padEnd(decimals, "0");
-  }
-
-  return BigInt(`${negative ? "-" : ""}${integer}${fraction}`);
-}
-
 export class FixedInt<T extends number> {
   _value: bigint;
   decimals: T;
@@ -124,32 +66,60 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
   }
 }
 
-// JB-specific below
+// lifted from viem
+function formatUnits(value: bigint, decimals: number) {
+  let display = value.toString();
 
-export const MAX_DISCOUNT_RATE = 1_000_000_000n;
-export const MAX_REDEMPTION_RATE = 10_000n;
-export const MAX_RESERVED_RATE = 10_000n;
+  const negative = display.startsWith("-");
+  if (negative) display = display.slice(1);
 
-export class ReservedRate extends FixedPortion<4> {
-  constructor(value: bigint) {
-    super(value, 4, MAX_RESERVED_RATE);
-  }
+  display = display.padStart(decimals, "0");
+
+  let [integer, fraction] = [
+    display.slice(0, display.length - decimals),
+    display.slice(display.length - decimals),
+  ];
+  fraction = fraction.replace(/(0+)$/, "");
+  return `${negative ? "-" : ""}${integer || "0"}${
+    fraction ? `.${fraction}` : ""
+  }`;
 }
 
-export class RedemptionRate extends FixedPortion<4> {
-  constructor(value: bigint) {
-    super(value, 4, MAX_REDEMPTION_RATE);
-  }
-}
+function parseUnits(value: string, decimals: number) {
+  let [integer, fraction = "0"] = value.split(".");
 
-export class DiscountRate extends FixedPortion<9> {
-  constructor(value: bigint) {
-    super(value, 9, MAX_DISCOUNT_RATE);
-  }
-}
+  const negative = integer.startsWith("-");
+  if (negative) integer = integer.slice(1);
 
-export class Ether extends FixedInt<18> {
-  constructor(value: bigint) {
-    super(value, 18);
+  // trim leading zeros.
+  fraction = fraction.replace(/(0+)$/, "");
+
+  // round off if the fraction is larger than the number of decimals.
+  if (decimals === 0) {
+    if (Math.round(Number(`.${fraction}`)) === 1)
+      integer = `${BigInt(integer) + 1n}`;
+    fraction = "";
+  } else if (fraction.length > decimals) {
+    const [left, unit, right] = [
+      fraction.slice(0, decimals - 1),
+      fraction.slice(decimals - 1, decimals),
+      fraction.slice(decimals),
+    ];
+
+    const rounded = Math.round(Number(`${unit}.${right}`));
+    if (rounded > 9)
+      fraction = `${BigInt(left) + BigInt(1)}0`.padStart(left.length + 1, "0");
+    else fraction = `${left}${rounded}`;
+
+    if (fraction.length > decimals) {
+      fraction = fraction.slice(1);
+      integer = `${BigInt(integer) + 1n}`;
+    }
+
+    fraction = fraction.slice(0, decimals);
+  } else {
+    fraction = fraction.padEnd(decimals, "0");
   }
+
+  return BigInt(`${negative ? "-" : ""}${integer}${fraction}`);
 }
