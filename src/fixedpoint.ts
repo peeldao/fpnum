@@ -77,8 +77,8 @@ export class FixedInt<T extends number> {
     this._value = value;
   }
 
-  static parse(value: string, decimals: number) {
-    return new FixedInt(parseUnits(value, decimals), decimals);
+  static parse<T extends number>(value: string, decimals: T) {
+    return new FixedInt<T>(parseUnits(value, decimals), decimals);
   }
 
   format(): string {
@@ -94,8 +94,10 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
   max: bigint;
 
   constructor(val: bigint, decimals: T, max: bigint) {
+    if (typeof max !== "undefined" && val > max) {
+      throw new Error(`value ${val} is greater than max ${max}`);
+    }
     super(val, decimals);
-    // set max first, if it exists.
     this.max = max;
   }
 
