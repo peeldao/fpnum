@@ -43,7 +43,7 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
   }
 
   set val(value: bigint) {
-    if (typeof this.max !== "undefined" && value > this.max) {
+    if (value > this.max) {
       throw new Error(`value ${value} is greater than max ${this.max}`);
     }
 
@@ -58,9 +58,6 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
   }
 
   setPercentage(percentage: number): void {
-    if (typeof this.max === "undefined")
-      throw new Error("FixedPortion.max is required");
-
     this.val = parseUnits(percentage.toString(), this.decimals);
   }
 }
