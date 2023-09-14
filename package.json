@@ -1,5 +1,5 @@
 {
-  "name": "fixedpoint-js",
+  "name": "fpnum",
   "version": "0.0.1",
   "description": "",
   "main": "lib/fixedpoint.js",
