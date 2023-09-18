@@ -22,8 +22,12 @@ export class FixedInt<T extends number> {
     return new FixedInt<T>(parseUnits(value, decimals), decimals);
   }
 
-  format(): string {
-    return formatUnits(this.val, this.decimals);
+  format(decimals?: number): string {
+    const formatted = formatUnits(this.val, this.decimals);
+    if (typeof decimals === "undefined") return formatted;
+
+    // parse float again to trim trailing 0s
+    return parseFloat(parseFloat(formatted).toFixed(decimals)).toString();
   }
 
   toFloat(): number {
