@@ -1,6 +1,6 @@
 {
   "name": "fpnum",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "type": "module",
   "description": "A tiny lib for fixed-point numbers",
   "main": "dist/fixedpoint.js",
