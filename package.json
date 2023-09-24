@@ -1,10 +1,10 @@
 {
   "name": "fpnum",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "type": "module",
   "description": "A tiny lib for fixed-point numbers",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/fixedpoint.js",
+  "types": "dist/fixedpoint.d.ts",
   "scripts": {
     "test": "vitest",
     "build": "tsc"
