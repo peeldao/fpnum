@@ -1,8 +1,9 @@
 import { FixedInt, FixedPortion } from "./fixedpoint";
+import { describe, expect, test } from "vitest";
 
 describe("fpnum", () => {
   describe("FixedInt", () => {
-    it.each`
+    test.each`
       value                         | decimals | expected
       ${1}                          | ${0}     | ${"1"}
       ${1}                          | ${1}     | ${"0.1"}
@@ -15,7 +16,7 @@ describe("fpnum", () => {
 
   describe("FixedPortion", () => {
     describe("value", () => {
-      it("throws if greater than max", () => {
+      test("throws if greater than max", () => {
         const fixedInt = new FixedPortion(1n, 18, 1n);
 
         expect(() => {
@@ -23,7 +24,7 @@ describe("fpnum", () => {
         }).toThrow("value 2 is greater than max 1");
       });
 
-      it("does not throw if less than max", () => {
+      test("does not throw if less than max", () => {
         const fixedInt = new FixedPortion(1n, 18, 2n);
         expect(() => {
           fixedInt.val = 1n;
