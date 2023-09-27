@@ -1,7 +1,21 @@
+/**
+ * Fixed point number implementation.
+ *
+ * This is useful for representing token amounts and other big numbers.
+ */
 export class FixedInt<T extends number> {
   _value: bigint;
+  /**
+   * The number of decimals to use.
+   */
   decimals: T;
 
+  /**
+   * Create a new fixed point number.
+   *
+   * @param val The value of the fixed point number.
+   * @param decimals The number of decimals to use.
+   */
   constructor(val: bigint, decimals: T) {
     if (decimals < 0) {
       throw new Error("decimals must be greater than or equal to 0");
@@ -11,17 +25,45 @@ export class FixedInt<T extends number> {
     this.decimals = decimals;
   }
 
+  /**
+   * Get the value of the fixed point number.
+   */
   get val() {
     return this._value;
   }
+
+  /**
+   * Set the value of the fixed point number.
+   *
+   * Does not change the decimals.
+   */
   set val(value: bigint) {
     this._value = value;
   }
 
+  /**
+   * Parse a string into a fixed point number.
+   *
+   * @param value The string to parse.
+   * @param decimals The number of decimals to use.
+   * @returns A new fixed point number.
+   */
   static parse<T extends number>(value: string, decimals: T) {
     return new FixedInt<T>(parseUnits(value, decimals), decimals);
   }
 
+  /**
+   * Format the fixed point number as a string.
+   *
+   * If `decimals` is provided, the number will be rounded to that number of
+   * decimals. Otherwise, the number will be formatted as-is.
+   *
+   * If the underlying value is greater than Number.MAX_VALUE
+   * (1.7976931348623157e+308), this will return 'Infinity'.
+   *
+   * @param decimals The number of decimals to round to.
+   * @returns The formatted string.
+   */
   format(decimals?: number): string {
     const formatted = formatUnits(this.val, this.decimals);
     if (typeof decimals === "undefined") return formatted;
@@ -30,14 +72,37 @@ export class FixedInt<T extends number> {
     return parseFloat(parseFloat(formatted).toFixed(decimals)).toString();
   }
 
+  /**
+   * Format the fixed point number to a float.
+   *
+   * If the underlying value is greater than Number.MAX_VALUE
+   * (1.7976931348623157e+308), this will return 'Infinity'.
+   *
+   * @returns The fixed point number as a float.
+   */
   toFloat(): number {
     return parseFloat(this.format());
   }
 }
 
+/**
+ * Fixed point number implementation with a maximum value.
+ *
+ * This is useful for representing percentages.
+ */
 export class FixedPortion<T extends number> extends FixedInt<T> {
+  /**
+   * The maximum value of the fixed point number.
+   */
   max: bigint;
 
+  /**
+   * Create a new fixed point number portion.
+   *
+   * @param val The value of the fixed point number.
+   * @param decimals The number of decimals to use.
+   * @param max The maximum value of the fixed point number.
+   */
   constructor(val: bigint, decimals: T, max: bigint) {
     if (typeof max !== "undefined" && val > max) {
       throw new Error(`value ${val} is greater than max ${max}`);
@@ -46,6 +111,13 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
     this.max = max;
   }
 
+  /**
+   * Set the value of the fixed point number.
+   *
+   * Does not change the decimals.
+   *
+   * If the value is greater than the maximum value, this will throw an error.
+   */
   set val(value: bigint) {
     if (value > this.max) {
       throw new Error(`value ${value} is greater than max ${this.max}`);
@@ -53,14 +125,26 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
 
     this._value = value;
   }
+
   get val() {
     return this._value;
   }
 
+  /**
+   * Represent the fixed point number as a percentage value.
+   *
+   * If the underlying value is greater than Number.MAX_VALUE
+   * (1.7976931348623157e+308), this will return 'Infinity'.
+   *
+   * @returns The fixed point number as a percentage.
+   */
   formatPercentage(): number {
     return this.toFloat() * 100;
   }
 
+  /**
+   * TODO: this is a bit confusing as it implies it sets the percentage, which I would assume is based on the max value
+   */
   setPercentage(percentage: number): void {
     this.val = parseUnits(percentage.toString(), this.decimals);
   }
