@@ -22,6 +22,13 @@ describe("fpnum", () => {
       expect(fixedInt.val).toEqual(1n);
       expect(fixedInt.decimals).toEqual(0);
     });
+
+    test("get and set val correctly", () => {
+      const fixedInt = new FixedInt(1n, 0);
+      expect(fixedInt.val).toEqual(1n);
+      fixedInt.val = 2n;
+      expect(fixedInt.val).toEqual(2n);
+    });
   });
 
   describe("FixedPortion", () => {
