@@ -60,7 +60,6 @@ describe("fpnum", () => {
         }).not.toThrow();
         expect(fixedInt.val).toEqual(1n);
       });
-
       test("does not throw if equal to max", () => {
         const fixedInt = new FixedPortion(1n, 18, 1n);
         expect(() => {
