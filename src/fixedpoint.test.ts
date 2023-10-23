@@ -29,6 +29,11 @@ describe("fpnum", () => {
       fixedInt.val = 2n;
       expect(fixedInt.val).toEqual(2n);
     });
+
+    test("converts to float correctly", () => {
+      const fixedInt = new FixedInt(100n, 2);
+      expect(fixedInt.toFloat()).toEqual(1.0);
+    });
   });
 
   describe("FixedPortion", () => {
