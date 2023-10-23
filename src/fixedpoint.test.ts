@@ -12,6 +12,16 @@ describe("fpnum", () => {
       const fixedInt = new FixedInt(value, decimals);
       expect(fixedInt.format()).toEqual(expected);
     });
+
+    test("should throw an error when decimals are negative", () => {
+      expect(() => new FixedInt(-1n, -1)).toThrow("decimals must be greater than or equal to 0");
+    });
+  
+    test("constructor initializes correctly", () => {
+      const fixedInt = new FixedInt(1n, 0);
+      expect(fixedInt.val).toEqual(1n);
+      expect(fixedInt.decimals).toEqual(0);
+    });
   });
 
   describe("FixedPortion", () => {
@@ -31,7 +41,7 @@ describe("fpnum", () => {
         }).not.toThrow();
         expect(fixedInt.val).toEqual(1n);
       });
-      
+
       test("does not throw if equal to max", () => {
         const fixedInt = new FixedPortion(1n, 18, 1n);
         expect(() => {
