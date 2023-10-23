@@ -61,6 +61,11 @@ describe("fpnum", () => {
         }).not.toThrow();
         expect(fixedInt.val).toEqual(1n);
       });
+
+      test("formats percentage correctly", () => {
+        const fixedPortion = new FixedPortion(50n, 2, 100n);
+        expect(fixedPortion.formatPercentage()).toEqual(50);
+      });
     });
   });
 });
