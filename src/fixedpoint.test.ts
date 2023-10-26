@@ -22,6 +22,25 @@ describe("fpnum", () => {
       expect(fixedInt.val).toEqual(1n);
       expect(fixedInt.decimals).toEqual(0);
     });
+
+    test("get and set val correctly", () => {
+      const fixedInt = new FixedInt(1n, 0);
+      expect(fixedInt.val).toEqual(1n);
+      fixedInt.val = 2n;
+      expect(fixedInt.val).toEqual(2n);
+    });
+
+    test.each`
+      value      | decimals | expected
+      ${100n}    | ${2}     | ${1.0}
+      ${1000n}   | ${3}     | ${1.0}
+      ${10n}     | ${1}     | ${1.0}
+      ${1n}      | ${0}     | ${1.0}
+      ${12345n}  | ${5}     | ${0.12345}
+    `("converts to float correctly", ({ value, decimals, expected }) => {
+      const fixedInt = new FixedInt(value, decimals);
+      expect(fixedInt.toFloat()).toEqual(expected);
+    });
   });
 
   describe("FixedPortion", () => {
@@ -48,6 +67,11 @@ describe("fpnum", () => {
           fixedInt.val = 1n;
         }).not.toThrow();
         expect(fixedInt.val).toEqual(1n);
+      });
+
+      test("formats percentage correctly", () => {
+        const fixedPortion = new FixedPortion(50n, 2, 100n);
+        expect(fixedPortion.formatPercentage()).toEqual(50);
       });
     });
   });
