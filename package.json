@@ -1,13 +1,16 @@
 {
   "name": "fpnum",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "type": "module",
   "description": "A tiny lib for fixed-point numbers",
-  "main": "dist/fixedpoint.js",
-  "types": "dist/fixedpoint.d.ts",
+  "main": "dist/cjs/fixedpoint.js",
+  "module": "dist/esm/fixedpoint.js",
+  "types": "dist/cjs/fixedpoint.d.ts",
   "scripts": {
     "test": "vitest",
-    "build": "tsc"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc --project ./tsconfig.esm.json",
+    "build:cjs": "tsc --project ./tsconfig.cjs.json"
   },
   "author": "",
   "license": "ISC",
