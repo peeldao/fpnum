@@ -139,7 +139,9 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
    * @returns The fixed point number as a percentage.
    */
   formatPercentage(): number {
-    return this.toFloat() * 100;
+    // subtract 2 decimals to get percentage
+    const formatted = formatUnits(this.val, this.decimals - 2);
+    return parseFloat(formatted);
   }
 
   /**
