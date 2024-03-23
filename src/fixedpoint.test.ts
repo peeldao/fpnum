@@ -19,15 +19,15 @@ describe("fpnum", () => {
   
     test("constructor initializes correctly", () => {
       const fixedInt = new FixedInt(1n, 0);
-      expect(fixedInt.val).toEqual(1n);
+      expect(fixedInt.value).toEqual(1n);
       expect(fixedInt.decimals).toEqual(0);
     });
 
     test("get and set val correctly", () => {
       const fixedInt = new FixedInt(1n, 0);
-      expect(fixedInt.val).toEqual(1n);
-      fixedInt.val = 2n;
-      expect(fixedInt.val).toEqual(2n);
+      expect(fixedInt.value).toEqual(1n);
+      fixedInt.value = 2n;
+      expect(fixedInt.value).toEqual(2n);
     });
 
     test.each`
@@ -49,28 +49,33 @@ describe("fpnum", () => {
         const fixedInt = new FixedPortion(1n, 18, 1n);
 
         expect(() => {
-          fixedInt.val = 2n;
+          fixedInt.value = 2n;
         }).toThrow("value 2 is greater than max 1");
       });
 
       test("does not throw if less than max", () => {
         const fixedInt = new FixedPortion(1n, 18, 2n);
         expect(() => {
-          fixedInt.val = 1n;
+          fixedInt.value = 1n;
         }).not.toThrow();
-        expect(fixedInt.val).toEqual(1n);
+        expect(fixedInt.value).toEqual(1n);
       });
       test("does not throw if equal to max", () => {
         const fixedInt = new FixedPortion(1n, 18, 1n);
         expect(() => {
-          fixedInt.val = 1n;
+          fixedInt.value = 1n;
         }).not.toThrow();
-        expect(fixedInt.val).toEqual(1n);
+        expect(fixedInt.value).toEqual(1n);
       });
 
       test("formats percentage correctly", () => {
         const fixedPortion = new FixedPortion(50n, 2, 100n);
         expect(fixedPortion.formatPercentage()).toEqual(50);
+      });
+
+      test("formats percentage correctly", () => {
+        const fixedPortion = new FixedPortion(5500n, 4, 10000n);
+        expect(fixedPortion.formatPercentage()).toEqual(55);
       });
     });
   });

@@ -13,22 +13,22 @@ export class FixedInt<T extends number> {
   /**
    * Create a new fixed point number.
    *
-   * @param val The value of the fixed point number.
+   * @param value The value of the fixed point number.
    * @param decimals The number of decimals to use.
    */
-  constructor(val: bigint, decimals: T) {
+  constructor(value: bigint, decimals: T) {
     if (decimals < 0) {
       throw new Error("decimals must be greater than or equal to 0");
     }
 
-    this._value = val;
+    this._value = value;
     this.decimals = decimals;
   }
 
   /**
    * Get the value of the fixed point number.
    */
-  get val() {
+  get value() {
     return this._value;
   }
 
@@ -37,7 +37,7 @@ export class FixedInt<T extends number> {
    *
    * Does not change the decimals.
    */
-  set val(value: bigint) {
+  set value(value: bigint) {
     this._value = value;
   }
 
@@ -65,7 +65,7 @@ export class FixedInt<T extends number> {
    * @returns The formatted string.
    */
   format(decimals?: number): string {
-    const formatted = formatUnits(this.val, this.decimals);
+    const formatted = formatUnits(this.value, this.decimals);
     if (typeof decimals === "undefined") return formatted;
 
     // parse float again to trim trailing 0s
@@ -99,15 +99,15 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
   /**
    * Create a new fixed point number portion.
    *
-   * @param val The value of the fixed point number.
+   * @param value The value of the fixed point number.
    * @param decimals The number of decimals to use.
    * @param max The maximum value of the fixed point number.
    */
-  constructor(val: bigint, decimals: T, max: bigint) {
-    if (typeof max !== "undefined" && val > max) {
-      throw new Error(`value ${val} is greater than max ${max}`);
+  constructor(value: bigint, decimals: T, max: bigint) {
+    if (typeof max !== "undefined" && value > max) {
+      throw new Error(`value ${value} is greater than max ${max}`);
     }
-    super(val, decimals);
+    super(value, decimals);
     this.max = max;
   }
 
@@ -118,7 +118,7 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
    *
    * If the value is greater than the maximum value, this will throw an error.
    */
-  set val(value: bigint) {
+  set value(value: bigint) {
     if (value > this.max) {
       throw new Error(`value ${value} is greater than max ${this.max}`);
     }
@@ -126,7 +126,7 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
     this._value = value;
   }
 
-  get val() {
+  get value() {
     return this._value;
   }
 
@@ -140,7 +140,7 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
    */
   formatPercentage(): number {
     // subtract 2 decimals to get percentage
-    const formatted = formatUnits(this.val, this.decimals - 2);
+    const formatted = formatUnits(this.value, this.decimals - 2);
     return parseFloat(formatted);
   }
 
@@ -148,7 +148,7 @@ export class FixedPortion<T extends number> extends FixedInt<T> {
    * TODO: this is a bit confusing as it implies it sets the percentage, which I would assume is based on the max value
    */
   setPercentage(percentage: number): void {
-    this.val = parseUnits(percentage.toString(), this.decimals);
+    this.value = parseUnits(percentage.toString(), this.decimals);
   }
 }
 
